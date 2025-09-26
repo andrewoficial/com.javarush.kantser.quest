@@ -1,0 +1,37 @@
+{
+  "id": "start",
+  "title": "Пробуждение",
+  "text": "Ты просыпаешься в своей комнате. Опции дня: поспать ещё, поковыряться в телефоне или быстро встать.",
+  "choices": {
+    "sleep_more": {
+      "id": "sleep_more",
+      "description": "Поспать ещё 30 минут",
+      "nextSceneId": "start",
+      "effect": {
+        "freeMinutesDelta": -30,
+        "energyDelta": 10,
+        "note": "Проспал, но немного отдохнул"
+      }
+    },
+    "scroll_phone": {
+      "id": "scroll_phone",
+      "description": "Позалипать в телефон — 40 минут",
+      "nextSceneId": "start",
+      "effect": {
+        "freeMinutesDelta": -40,
+        "energyDelta": -5,
+        "note": "Время уходит, энергия немного падает"
+      }
+    },
+    "quick_up": {
+      "id": "quick_up",
+      "description": "Встать быстро: +10 минут времени, -15 энергии",
+      "nextSceneId": "dinner",
+      "effect": {
+        "freeMinutesDelta": 10,
+        "energyDelta": -15,
+        "note": "Ты встал быстро, но немного устал"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login / Register</title>
+</head>
+<body>
+<h1>Welcome!</h1>
+<form method="post" action="/auth">
+    <input type="hidden" name="action" value="login">
+    <label>Username: <input type="text" name="username" required></label><br>
+    <label>Password: <input type="password" name="password" required></label><br>
+    <button type="submit">Login</button>
+</form>
+<hr>
+<form method="post" action="/auth">
+    <input type="hidden" name="action" value="register">
+    <label>New Username: <input type="text" name="username" required></label><br>
+    <label>New Password: <input type="password" name="password" required></label><br>
+    <button type="submit">Register</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "id": "dinner",
+  "title": "Завтрак",
+  "text": "Нужно что-то поесть. Есть вариант несколько вариантов",
+  "choices": {
+    "sleep_more": {
+      "id": "sleep_more",
+      "description": "Приготовить что-то вкусное",
+      "nextSceneId": "start",
+      "effect": {
+        "freeMinutesDelta": -10,
+        "energyDelta": 10,
+        "note": "Хорошо покушал"
+      }
+    },
+    "scroll_phone": {
+      "id": "scroll_phone",
+      "description": "Позалипать в телефон 5 минут",
+      "nextSceneId": "start",
+      "effect": {
+        "freeMinutesDelta": -35,
+        "energyDelta": -5,
+        "note": "Время уходит, энергия немного падает"
+      }
+    },
+    "quick_up": {
+      "id": "quick_up",
+      "description": "Не есть вообще, бегом на работу!",
+      "nextSceneId": "goOut",
+      "effect": {
+        "freeMinutesDelta": 5,
+        "energyDelta": -15,
+        "note": "Голодный..."
+      }
+    }
+  }
+}
