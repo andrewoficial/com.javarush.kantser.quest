@@ -9,28 +9,28 @@
       "nextSceneId": "start",
       "effect": {
         "freeMinutesDelta": -30,
-        "energyDelta": 10,
+        "energyDelta": 15,
         "note": "Проспал, но немного отдохнул"
       }
     },
     "scroll_phone": {
       "id": "scroll_phone",
-      "description": "Позалипать в телефон — 40 минут",
+      "description": "Позалипать в телефон пару минут",
       "nextSceneId": "start",
       "effect": {
-        "freeMinutesDelta": -40,
-        "energyDelta": -5,
-        "note": "Время уходит, энергия немного падает"
+        "freeMinutesDelta": -50,
+        "energyDelta": -15,
+        "note": "За мемами время пролетело незаметно"
       }
     },
     "quick_up": {
       "id": "quick_up",
-      "description": "Встать быстро: +10 минут времени, -15 энергии",
+      "description": "Встать быстро и сурово",
       "nextSceneId": "dinner",
       "effect": {
         "freeMinutesDelta": 10,
-        "energyDelta": -15,
-        "note": "Ты встал быстро, но немного устал"
+        "energyDelta": -10,
+        "note": "Ты встал быстро, ты молодец"
       }
     }
   }

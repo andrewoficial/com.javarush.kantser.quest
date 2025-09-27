@@ -8,7 +8,7 @@
       "description": "Сделать мелочь для разгона",
       "nextSceneId": "preLunch",
       "effect": {
-        "freeMinutesDelta": -15,
+        "freeMinutesDelta": -10,
         "energyDelta": 5,
         "note": "Немного продвинулся, стало легче."
       }
@@ -18,9 +18,9 @@
       "description": "Взяться за сложную задачу",
       "nextSceneId": "preLunch",
       "effect": {
-        "freeMinutesDelta": -40,
-        "energyDelta": -20,
-        "note": "Сложно, но хоть часть сделал."
+        "freeMinutesDelta": -10,
+        "energyDelta": -30,
+        "note": "Сложно, зато почти самая большая часть работы сделана."
       }
     },
     "chatAgain": {
@@ -29,7 +29,7 @@
       "nextSceneId": "preLunch",
       "effect": {
         "freeMinutesDelta": -30,
-        "energyDelta": 10,
+        "energyDelta": 5,
         "note": "Силы сохранил, но задачи ждут."
       }
     }

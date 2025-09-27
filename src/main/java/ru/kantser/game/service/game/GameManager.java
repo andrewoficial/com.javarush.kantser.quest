@@ -72,13 +72,13 @@ public class GameManager {
         if (e != null) {
             if (e.getFreeMinutesDelta() != null) {
                 int newMinutes = player.getFreeMinutes() + e.getFreeMinutesDelta();
-                player.setFreeMinutes(Math.max(0, newMinutes));
+                player.setFreeMinutes(Math.max(-100, newMinutes));
             }
 
             if (e.getEnergyDelta() != null) {
                 log.info("e.getEnergyDelta() {}",e.getEnergyDelta());
                 int newEnergy = player.getEnergy() + e.getEnergyDelta();
-                player.setEnergy(Math.max(0, Math.min(100, newEnergy))); // clamp 0..100
+                player.setEnergy(Math.max(-5, Math.min(100, newEnergy))); // clamp 0..100
                 state.setPlayerState(player);
             }
         }
@@ -94,6 +94,12 @@ public class GameManager {
         if (nextScene != null && !nextScene.isBlank()) {
             SceneState newSceneState = new SceneState();
             newSceneState.setCurrentSceneId(nextScene);
+            if(choice.getEffect()  != null){
+                newSceneState.setTipText(choice.getEffect().getNote());
+            }else{
+                newSceneState.setTipText("");
+            }
+
             state.setSceneState(newSceneState);
         } else {
             // если nextScene == null, оставляем ту же сцену

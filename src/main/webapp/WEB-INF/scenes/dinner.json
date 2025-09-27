@@ -3,28 +3,38 @@
   "title": "Завтрак",
   "text": "Нужно что-то поесть. Есть вариант несколько вариантов",
   "choices": {
-    "sleep_more": {
-      "id": "sleep_more",
+    "tasty_food": {
+      "id": "tasty_food",
       "description": "Приготовить что-то вкусное",
-      "nextSceneId": "start",
+      "nextSceneId": "goOut",
       "effect": {
-        "freeMinutesDelta": -10,
-        "energyDelta": 10,
-        "note": "Хорошо покушал"
+        "freeMinutesDelta": -20,
+        "energyDelta": 25,
+        "note": "Хорошо покушал ♥"
+      }
+    },
+    "tasty_food": {
+      "id": "usual_food",
+      "description": "Стандартный вариант, обыденный и привычный.",
+      "nextSceneId": "goOut",
+      "effect": {
+        "freeMinutesDelta": -5,
+        "energyDelta": 20,
+        "note": "Схема рабочая, но рутинная."
       }
     },
     "scroll_phone": {
       "id": "scroll_phone",
       "description": "Позалипать в телефон 5 минут",
-      "nextSceneId": "start",
+      "nextSceneId": "dinner",
       "effect": {
         "freeMinutesDelta": -35,
         "energyDelta": -5,
-        "note": "Время уходит, энергия немного падает"
+        "note": "Мы все знаем, как это бывает..."
       }
     },
     "quick_up": {
-      "id": "quick_up",
+      "id": "no_food",
       "description": "Не есть вообще, бегом на работу!",
       "nextSceneId": "goOut",
       "effect": {

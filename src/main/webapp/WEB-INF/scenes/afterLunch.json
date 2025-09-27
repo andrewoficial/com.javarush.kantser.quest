@@ -1,0 +1,37 @@
+{
+  "id": "afterLunch",
+  "title": "После обеда",
+  "text": "Осталось всего ничего. Какие планы?",
+  "choices": {
+    "work": {
+      "id": "work",
+      "description": "Вернуться к задачам",
+      "nextSceneId": "goHome",
+      "effect": {
+        "freeMinutesDelta": 20,
+        "energyDelta": -20,
+        "note": "Поработал, но усталость накапливается."
+      }
+    },
+    "coffee": {
+      "id": "coffee",
+      "description": "Выпить ещё кофе",
+      "nextSceneId": "goHome",
+      "effect": {
+        "freeMinutesDelta": -10,
+        "energyDelta": 10,
+        "note": "Кофе взбодрило, но ненадолго."
+      }
+    },
+    "slack": {
+      "id": "slack",
+      "description": "Просто притвориться занятым и ничего не делать",
+      "nextSceneId": "goHome",
+      "effect": {
+        "freeMinutesDelta": -10,
+        "energyDelta": 15,
+        "note": "Время прошло, а работа стоит."
+      }
+    }
+  }
+}

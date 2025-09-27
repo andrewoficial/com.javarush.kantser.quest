@@ -4,23 +4,23 @@
   "text": "Ты выходишь из дома. Нужно решить, как добираться.",
   "choices": {
     "walk": {
-      "id": "walk",
-      "description": "Пойти пешком (здорово, но дольше)",
+      "id": "easy_bus",
+      "description": "Ждать удобный транспорт без пересадок",
       "nextSceneId": "office",
       "effect": {
-        "freeMinutesDelta": -30,
-        "energyDelta": -10,
-        "note": "Прогулялся, воздухом подышал, но устал."
+        "freeMinutesDelta": -35,
+        "energyDelta": -5,
+        "note": "Это конечно хорошо, но долго..."
       }
     },
     "bus": {
-      "id": "bus",
-      "description": "Поехать на автобусе",
+      "id": "many_bus",
+      "description": "Поехать на любом автобусе, а дальше с пересадкой",
       "nextSceneId": "office",
       "effect": {
-        "freeMinutesDelta": -15,
-        "energyDelta": -5,
-        "note": "Толкотня в транспорте, немного устал."
+        "freeMinutesDelta": -10,
+        "energyDelta": -10,
+        "note": "Бегал по улице, устал от смены трансопрта."
       }
     },
     "taxi": {
@@ -29,8 +29,8 @@
       "nextSceneId": "office",
       "effect": {
         "freeMinutesDelta": -5,
-        "energyDelta": 0,
-        "note": "Быстро и комфортно, но деньги уходят."
+        "energyDelta": -5,
+        "note": "Быстро и комфортно, но деньги уходят. Хорошо, что эта игра их не учитывает."
       }
     }
   }

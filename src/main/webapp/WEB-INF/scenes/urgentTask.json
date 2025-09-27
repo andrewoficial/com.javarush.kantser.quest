@@ -8,9 +8,9 @@
       "description": "Взяться сразу",
       "nextSceneId": "lunch",
       "effect": {
-        "freeMinutesDelta": -30,
-        "energyDelta": -20,
-        "note": "Решил проблему, но устал."
+        "freeMinutesDelta": -40,
+        "energyDelta": -35,
+        "note": "Решил задачу, но какой ценой?"
       }
     },
     "delay": {
@@ -19,8 +19,8 @@
       "nextSceneId": "lunch",
       "effect": {
         "freeMinutesDelta": 0,
-        "energyDelta": 10,
-        "note": "Сохранил силы, но долг висит."
+        "energyDelta": 0,
+        "note": "Сохранил силы, но долг висит. В текущей версии игры это никак не повлияет. Иногда так бывает и в жизни."
       }
     },
     "delegate": {
@@ -28,9 +28,9 @@
       "description": "Попробовать перекинуть на кого-то ещё",
       "nextSceneId": "lunch",
       "effect": {
-        "freeMinutesDelta": -5,
-        "energyDelta": 5,
-        "note": "Сомнительная стратегия, но сработало."
+        "freeMinutesDelta": 15,
+        "energyDelta": 15,
+        "note": "Сомнительная стратегия, но сработало. Ты лапочка ♥"
       }
     }
   }

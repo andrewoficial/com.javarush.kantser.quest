@@ -79,7 +79,7 @@
             <p>Инвентарь: ${gameState.playerState.resources}</p>
         </div>
     </c:if>
-
+    <i>${gameState.sceneState.getTipText()}</i>
     <!-- Блок с текущей сценой -->
     <c:if test="${not empty gameState.sceneState.currentScene}">
         <div class="scene-container">

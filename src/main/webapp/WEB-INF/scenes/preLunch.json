@@ -9,8 +9,8 @@
       "nextSceneId": "urgentTask",
       "effect": {
         "freeMinutesDelta": -20,
-        "energyDelta": -5,
-        "note": "Мозг устал от ленты."
+        "energyDelta": -10,
+        "note": "Мозг устал от ленты, время безвозвратно потеряно..."
       }
     },
     "walkOffice": {
@@ -18,8 +18,8 @@
       "description": "Пройтись по офису",
       "nextSceneId": "urgentTask",
       "effect": {
-        "freeMinutesDelta": -10,
-        "energyDelta": 5,
+        "freeMinutesDelta": -5,
+        "energyDelta": 20,
         "note": "Немного размялся."
       }
     },
@@ -28,7 +28,7 @@
       "description": "Продолжить работать",
       "nextSceneId": "urgentTask",
       "effect": {
-        "freeMinutesDelta": -30,
+        "freeMinutesDelta": 5,
         "energyDelta": -15,
         "note": "Работаешь без отдыха, тяжеловато."
       }

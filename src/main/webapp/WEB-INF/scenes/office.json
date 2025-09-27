@@ -8,8 +8,8 @@
       "description": "Сначала кофе",
       "nextSceneId": "workStart",
       "effect": {
-        "freeMinutesDelta": -10,
-        "energyDelta": 15,
+        "freeMinutesDelta": -5,
+        "energyDelta": 10,
         "note": "Кофе помогает сосредоточиться."
       }
     },
@@ -19,8 +19,8 @@
       "nextSceneId": "workStart",
       "effect": {
         "freeMinutesDelta": -20,
-        "energyDelta": 5,
-        "note": "Повеселился, но время уходит."
+        "energyDelta": -5,
+        "note": "Обсудили все проблемы в мире, расстроили друг друга еще больше..."
       }
     },
     "tasks": {
@@ -28,9 +28,9 @@
       "description": "Сразу к задачам",
       "nextSceneId": "workStart",
       "effect": {
-        "freeMinutesDelta": 0,
-        "energyDelta": -10,
-        "note": "Начал работать без разгона, энергия падает."
+        "freeMinutesDelta": -10,
+        "energyDelta": -5,
+        "note": "Начал работать без разгона, ничего себе!!"
       }
     }
   }

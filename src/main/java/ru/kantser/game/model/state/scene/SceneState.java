@@ -13,6 +13,7 @@ public class SceneState implements SceneStateInterface {
     private static final Logger log = LoggerFactory.getLogger(SceneState.class);
     private String currentSceneId;
     private transient GameScene currentScene; // transient - не сериализуется в JSON
+    private transient String tipText = ""; //лень делать много проверок на нул
 
     public SceneState() {
         log.info("Создаю SceneState без параметров");
@@ -42,6 +43,18 @@ public class SceneState implements SceneStateInterface {
     @JsonIgnore
     public GameScene getCurrentScene() {
         return currentScene;
+    }
+
+    @Override
+    @JsonIgnore
+    public void setTipText(String text){
+        tipText = text;
+    }
+
+    @Override
+    @JsonIgnore
+    public String getTipText(){
+        return tipText;
     }
 
     @Override

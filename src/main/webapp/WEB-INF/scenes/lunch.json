@@ -8,9 +8,9 @@
       "description": "Перекусить быстро",
       "nextSceneId": "afterLunch",
       "effect": {
-        "freeMinutesDelta": -10,
-        "energyDelta": 5,
-        "note": "Быстро перекусил, но чувство голода останется."
+        "freeMinutesDelta": -5,
+        "energyDelta": 15,
+        "note": "Быстро перекусил, сыт но в печали."
       }
     },
     "long": {
@@ -18,8 +18,8 @@
       "description": "Плотно пообедать",
       "nextSceneId": "afterLunch",
       "effect": {
-        "freeMinutesDelta": -40,
-        "energyDelta": 20,
+        "freeMinutesDelta": -15,
+        "energyDelta": 18,
         "note": "Сыт, но времени ушло много."
       }
     },

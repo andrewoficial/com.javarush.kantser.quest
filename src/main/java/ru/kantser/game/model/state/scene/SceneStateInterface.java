@@ -8,4 +8,8 @@ public interface SceneStateInterface {
     void setCurrentSceneId(String currentSceneId);
     GameScene getCurrentScene(); // новый метод для получения полного объекта сцены
     void setCurrentScene(GameScene scene); // новый метод для установки полного объекта
+
+    void setTipText(String description);
+
+    String getTipText();
 }
