@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kantser.game.model.state.game.GameState;
 import ru.kantser.game.model.state.StateRepository;
-import ru.kantser.game.servlet.GameServlet;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -68,10 +66,10 @@ public class SaveGameManager implements StateRepository {
     public synchronized void save(GameState state, String userId, String saveId) throws IOException {
         log.info("save");
         Path userDir = getUserDirectory(userId);
-        Files.createDirectories(userDir); // Создаем папку пользователя если нет
+        Files.createDirectories(userDir);
 
         Path savePath = getUserSavePath(userId, saveId);
-        // Атомарно: tmp -> move
+
         Path tmp = Files.createTempFile(userDir, saveId + ".", ".tmp");
         mapper.writeValue(tmp.toFile(), state);
         Files.move(tmp, savePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);

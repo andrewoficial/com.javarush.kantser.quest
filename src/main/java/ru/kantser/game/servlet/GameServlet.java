@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.kantser.game.builder.scene.SceneJsonBuilder;
 import ru.kantser.game.model.scene.GameScene;
 import ru.kantser.game.model.scene.Scene;
 import ru.kantser.game.model.scene.choice.Choice;
@@ -154,36 +155,27 @@ public class GameServlet extends HttpServlet {
     }
 
     private void newGame(HttpServletRequest req, HttpServletResponse resp, String userId) throws IOException, ServletException {
-        log.info("Начинаю новую игру для пользователя {}", userId );
-        // Создаём initial state
-        GameState newState = new GameState();
-        log.info("Создал состояние игры и задал ему userId");
+        log.info("Run create new game for user: {}", userId );
 
-        // Initial player
+        GameState newState = new GameState();
+        log.info("Create gameState");
+
         Map<String, Integer> resources = new HashMap<>();
         Map<String, Integer> skills = new HashMap<>();
         Set<String> inventory = new HashSet<>();
-        /*
-            @JsonProperty("playerId") String playerId,
-            @JsonProperty("resources") Map<String, Integer> resources,
-            @JsonProperty("skills")  Map<String, Integer> skills,
-            @JsonProperty("inventory") Set<String> inventory,
-            @JsonProperty("currentScene") String currentScene,
-            @JsonProperty("timeSlot") String timeSlot,
-            @JsonProperty("energy") int energy,
-            @JsonProperty("day") int day) {
-         */
-        PlayerState playerState = new PlayerState(userId, resources, skills, inventory, "start", "morning", 85, 1);
-        log.info("Создал состояние игрока");
-        newState.setPlayerState(playerState);
-        log.info("Поместил состояние игрока в игру");
 
-        // Initial scene
+        PlayerState playerState = new PlayerState(userId, resources, skills, inventory, "start", "morning", 85, 1);
+        newState.setPlayerState(playerState);
+        log.info("Create playerState and put it in gameState");
+
+
+        GameScene firstScene = gameManager.getSceneBuilder().getScene("start");
         SceneState sceneState = new SceneState();
         sceneState.setCurrentSceneId("start");
-        log.info("Создал состояние сцены с именем {}", sceneState.getCurrentSceneId() );
-        newState.setSceneState(sceneState); // Это обновит lastSceneIds
-        log.info("Поместил состояние сцены в игру");
+        sceneState.setCurrentScene(firstScene);
+
+        newState.setSceneState(sceneState);
+        log.info("Create sceneState and put it in gameState");
 
         // Auto-save
         saveManager.save(newState, userId, "auto");
@@ -204,35 +196,47 @@ public class GameServlet extends HttpServlet {
         String pendingUser = (String) req.getSession().getAttribute(SESSION_KEY_PENDING_LOAD_USER);
         String pendingSlot = (String) req.getSession().getAttribute(SESSION_KEY_PENDING_LOAD_SLOT);
         log.info("pendingUser {}, pendingSlot {}", pendingUser, pendingSlot);
-        if (pendingUser != null && pendingSlot != null) {
-            log.info("Найден pending load: {}/{}", pendingUser, pendingSlot);
+        if (pendingUser != null && pendingSlot != null) { //Если данные для сохранения передаются полями запроса
+            log.info("Found pending load: {}/{}", pendingUser, pendingSlot);
             gameState = saveManager.load(pendingUser, pendingSlot);
             log.info(gameState.getSceneState().getCurrentScene().getChoices().toString());
             log.info(gameState.getSceneState().getCurrentScene().getTitle());
 
-            // очистим pending (одноразово)
+
             req.getSession().removeAttribute(SESSION_KEY_PENDING_LOAD_USER);
             req.getSession().removeAttribute(SESSION_KEY_PENDING_LOAD_SLOT);
-            // также обновим userId в сессии и запишем gameState
+
             req.getSession().setAttribute("userId", pendingUser);
             req.getSession().setAttribute(SESSION_KEY_GAME_STATE, gameState);
-        } else if (sessionState instanceof GameState) {
+        } else if (sessionState instanceof GameState) { //Если передаётся целиком состояние игры
             log.info("Найдено состояние игры ");
             gameState = (GameState) sessionState;
+            ensureSceneLoaded(gameState);
+            req.setAttribute("gameState", gameState);
+            req.getRequestDispatcher("/game.jsp").forward(req, resp);
         } else {
-            log.warn("pendingUser or pendingSlot is NULL, загужаю последнее сохранение");
-            // 3) По умолчанию — загружаем auto-save
-            gameState = saveManager.load(userId, "auto");
-            if (gameState == null) {
-                log.warn("Автосохранение не найдено, запускаю новую игру (редиректом)");
+            log.warn("pendingUser or pendingSlot is NULL  фтd received not instance of GameState, load last autosave");
+            if(saveManager.exists(userId, "auto")){
+                // 3) По умолчанию — загружаем auto-save
+                gameState = saveManager.load(userId, "auto");
+                if (gameState == null) {
+                    log.warn("Can not load autosave, run new game (by redirect)");
+                    // нет autosave — создаём новую игру
+                    resp.sendRedirect(req.getContextPath() + "/game?action=new");
+                    return;
+                }else{
+                    ensureSceneLoaded(gameState);
+                    req.setAttribute("gameState", gameState);
+                    req.getRequestDispatcher("/game.jsp").forward(req, resp);
+                }
+            }else{
+                log.warn("Autosave not found. Run new game (by redirect)");
                 // нет autosave — создаём новую игру
                 resp.sendRedirect(req.getContextPath() + "/game?action=new");
-                return;
             }
+
         }
-        ensureSceneLoaded(gameState);
-        req.setAttribute("gameState", gameState);
-        req.getRequestDispatcher("/game.jsp").forward(req, resp);
+
     }
 
 
@@ -251,8 +255,8 @@ public class GameServlet extends HttpServlet {
         GameState updatedState = gameManager.processChoice(currentState, choiceId);
 
         // Auto-save
-        saveManager.save(updatedState, userId, "auto");
         ensureSceneLoaded(updatedState);
+        saveManager.save(updatedState, userId, "auto");
         req.setAttribute("gameState", updatedState);
         req.getRequestDispatcher("/game.jsp").forward(req, resp);
     }
@@ -270,7 +274,7 @@ public class GameServlet extends HttpServlet {
         if (sceneId == null) return;
 
         try {
-            GameScene scene = gameManager.getSceneService().getScene(sceneId);
+            GameScene scene = gameManager.getSceneBuilder().getScene(sceneId);
             sceneState.setCurrentScene(scene);
         } catch (Exception e) {
             log.warn("Не удалось загрузить сцену {}: {}", sceneId, e.getMessage());

@@ -3,12 +3,11 @@ package ru.kantser.game.service.auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kantser.game.exception.UserAlreadyExistsException;
-import ru.kantser.game.servlet.AuthServlet;
+
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// Простая реализация с хардкодированными пользователями
 public class SimpleAuthService implements AuthService {
     private static final Logger log = LoggerFactory.getLogger(SimpleAuthService.class);
     private final Map<String, String> users = new ConcurrentHashMap<>();
@@ -34,9 +33,9 @@ public class SimpleAuthService implements AuthService {
     
     @Override
     public void createUser(String username, String password) throws UserAlreadyExistsException {
-        log.info("createUser");
+        log.info("run createUser [{}]", username);
         if (users.containsKey(username)) {
-            throw new UserAlreadyExistsException("User " + username + " already exists");
+            throw new UserAlreadyExistsException("Registration via SimpleAuthService", username, password);
         }
         users.put(username, password);
     }

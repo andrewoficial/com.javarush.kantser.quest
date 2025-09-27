@@ -74,7 +74,6 @@ public class AuthServlet extends HttpServlet {
             session.setAttribute("userId", username);
             session.setMaxInactiveInterval(30 * 60); // 30 минут
 
-            // Перенаправляем на страницу выбора сохранения
             resp.sendRedirect("game?action=listSaves");
         } else {
             try {

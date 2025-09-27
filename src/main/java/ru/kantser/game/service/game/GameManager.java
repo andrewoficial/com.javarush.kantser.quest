@@ -3,40 +3,37 @@ package ru.kantser.game.service.game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kantser.game.model.scene.GameScene;
-import ru.kantser.game.model.scene.Scene;
 import ru.kantser.game.model.scene.choice.Choice;
 import ru.kantser.game.model.scene.choice.Effect;
 import ru.kantser.game.model.state.game.GameState;
 import ru.kantser.game.model.state.player.PlayerState;
 import ru.kantser.game.model.state.scene.SceneState;
-import ru.kantser.game.service.SceneService;
-
+import ru.kantser.game.builder.scene.SceneJsonBuilder;
 import java.io.IOException;
-import java.util.Map;
+
 
 public class GameManager {
     private static final Logger log = LoggerFactory.getLogger(GameManager.class);
-    private SceneService sceneService;
+    private SceneJsonBuilder sceneBuilder;
 
     public GameManager() {
         log.info("GameManager инициализирован (без параметров)");
     }
 
-    // удобный конструктор из строки (чтобы существующий GameServlet работал)
     public GameManager(String scenesPath) {
         this();
-        SceneService sceneService = new SceneService(scenesPath);
+        SceneJsonBuilder sceneBuilder = new SceneJsonBuilder(scenesPath);
         log.info("Создан SceneService с папкой {}", scenesPath);
-        log.info("Созданный SceneService {}", sceneService.toString());
-        this.setSceneService(sceneService);
+        log.info("Созданный SceneService {}", sceneBuilder.toString());
+        this.setSceneBuilder(sceneBuilder);
         log.info("GameManager инициализирован (scenesPath)");
     }
 
-    public void setSceneService(SceneService sceneService){
-        if(sceneService == null){
+    public void setSceneBuilder(SceneJsonBuilder sceneBuilder){
+        if(sceneBuilder == null){
             log.warn("Передал null SceneService в метод setSceneService");
         }
-        this.sceneService = sceneService;
+        this.sceneBuilder = sceneBuilder;
     }
 
     public GameState processChoice(GameState state, String choiceId) throws IOException {
@@ -52,7 +49,7 @@ public class GameManager {
         }
 
         // Получаем сцену (если в state не вложена, загружаем через sceneService)
-        GameScene scene = sceneService.getScene(sceneState.getCurrentSceneId());
+        GameScene scene = sceneBuilder.getScene(sceneState.getCurrentSceneId());
         if (scene == null) throw new IllegalStateException("Scene not found: " + sceneState.getCurrentSceneId());
         log.info("Получил сцену, над которой надо применить действие {}", scene.getTitle());
         Choice choice = scene.getChoices().get(choiceId);
@@ -103,7 +100,7 @@ public class GameManager {
         return state;
     }
 
-    public SceneService getSceneService(){
-        return sceneService;
+    public SceneJsonBuilder getSceneBuilder(){
+        return sceneBuilder;
     }
 }

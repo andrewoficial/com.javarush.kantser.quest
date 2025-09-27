@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.kantser.game.model.scene.GameScene;
 import ru.kantser.game.model.scene.Scene;
 import ru.kantser.game.model.scene.choice.Choice;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,10 +26,17 @@ public class SceneJsonBuilder implements SceneBuilder {
     private String text;
     private Map<String, Choice> choices = new HashMap<>();
 
-    public SceneJsonBuilder fromJson(String json) {
-        log.info("Вызываю конструктор Scene из JSON");
-        this.jsonSource = json;
-        return this;
+    private final Path scenesDir;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public SceneJsonBuilder(String scenesPath) {
+        this.scenesDir = Path.of(scenesPath);
+    }
+
+    public GameScene getScene(String sceneId) throws IOException {
+        Path file = scenesDir.resolve(sceneId + ".json");
+        String json = Files.readString(file);
+        return mapper.readValue(json, GameScene.class);
     }
 
     @Override
