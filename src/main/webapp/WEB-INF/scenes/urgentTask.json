@@ -1,0 +1,37 @@
+{
+  "id": "urgentTask",
+  "title": "Неожиданная задача",
+  "text": "Коллега подкинул срочную задачу. Что делать?",
+  "choices": {
+    "doNow": {
+      "id": "doNow",
+      "description": "Взяться сразу",
+      "nextSceneId": "lunch",
+      "effect": {
+        "freeMinutesDelta": -30,
+        "energyDelta": -20,
+        "note": "Решил проблему, но устал."
+      }
+    },
+    "delay": {
+      "id": "delay",
+      "description": "Отложить на потом",
+      "nextSceneId": "lunch",
+      "effect": {
+        "freeMinutesDelta": 0,
+        "energyDelta": 10,
+        "note": "Сохранил силы, но долг висит."
+      }
+    },
+    "delegate": {
+      "id": "delegate",
+      "description": "Попробовать перекинуть на кого-то ещё",
+      "nextSceneId": "lunch",
+      "effect": {
+        "freeMinutesDelta": -5,
+        "energyDelta": 5,
+        "note": "Сомнительная стратегия, но сработало."
+      }
+    }
+  }
+}

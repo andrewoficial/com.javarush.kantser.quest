@@ -1,0 +1,27 @@
+{
+  "id": "goHome",
+  "title": "Путь домой",
+  "text": "Рабочий день подходит к концу. Варианты:",
+  "choices": {
+    "transport": {
+      "id": "transport",
+      "description": "Ехать домой на транспорте",
+      "nextSceneId": "goodEnding",
+      "effect": {
+        "freeMinutesDelta": -30,
+        "energyDelta": -5,
+        "note": "Доехал нормально, немного устал."
+      }
+    },
+    "walk": {
+      "id": "walk",
+      "description": "Пройтись пешком до дома",
+      "nextSceneId": "goodEnding",
+      "effect": {
+        "freeMinutesDelta": -60,
+        "energyDelta": -15,
+        "note": "Долго, но воздухом подышал."
+      }
+    }
+  }
+}

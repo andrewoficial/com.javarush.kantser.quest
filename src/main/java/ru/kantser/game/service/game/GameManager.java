@@ -68,27 +68,29 @@ public class GameManager {
             // сюда можно добавить другие проверки
         }
 
-        // Применяю effect
         Effect e = choice.getEffect();
         if (e != null) {
             if (e.getFreeMinutesDelta() != null) {
                 int newMinutes = player.getFreeMinutes() + e.getFreeMinutesDelta();
                 player.setFreeMinutes(Math.max(0, newMinutes));
             }
-            log.info("player.getEnergy() до применения {}",player.getEnergy());
+
             if (e.getEnergyDelta() != null) {
                 log.info("e.getEnergyDelta() {}",e.getEnergyDelta());
                 int newEnergy = player.getEnergy() + e.getEnergyDelta();
                 player.setEnergy(Math.max(0, Math.min(100, newEnergy))); // clamp 0..100
-                state.setPlayerState(player);//Вроде не обновляло
+                state.setPlayerState(player);
             }
-            log.info("player.getEnergy() после применения {}",player.getEnergy());
-
-            // можно логировать e.getNote()
         }
 
-        // Смена сцены
-        String nextScene = choice.getNextSceneId();
+        // Смена сцены (проверка на завершение, но не очень красиво)
+        String nextScene;
+        if(player.getEnergy() < 10 || player.getFreeMinutes() < -50){
+            nextScene = "badEnding";
+        }else{
+            nextScene = choice.getNextSceneId();
+        }
+
         if (nextScene != null && !nextScene.isBlank()) {
             SceneState newSceneState = new SceneState();
             newSceneState.setCurrentSceneId(nextScene);

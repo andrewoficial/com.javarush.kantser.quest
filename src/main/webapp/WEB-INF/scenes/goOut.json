@@ -1,0 +1,37 @@
+{
+  "id": "goOut",
+  "title": "Выход на работу",
+  "text": "Ты выходишь из дома. Нужно решить, как добираться.",
+  "choices": {
+    "walk": {
+      "id": "walk",
+      "description": "Пойти пешком (здорово, но дольше)",
+      "nextSceneId": "office",
+      "effect": {
+        "freeMinutesDelta": -30,
+        "energyDelta": -10,
+        "note": "Прогулялся, воздухом подышал, но устал."
+      }
+    },
+    "bus": {
+      "id": "bus",
+      "description": "Поехать на автобусе",
+      "nextSceneId": "office",
+      "effect": {
+        "freeMinutesDelta": -15,
+        "energyDelta": -5,
+        "note": "Толкотня в транспорте, немного устал."
+      }
+    },
+    "taxi": {
+      "id": "taxi",
+      "description": "Взять такси",
+      "nextSceneId": "office",
+      "effect": {
+        "freeMinutesDelta": -5,
+        "energyDelta": 0,
+        "note": "Быстро и комфортно, но деньги уходят."
+      }
+    }
+  }
+}

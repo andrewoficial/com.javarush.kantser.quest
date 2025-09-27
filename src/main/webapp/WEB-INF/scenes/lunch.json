@@ -1,0 +1,37 @@
+{
+  "id": "lunch",
+  "title": "Обед",
+  "text": "Настало время обеда. Варианты:",
+  "choices": {
+    "fast": {
+      "id": "fast",
+      "description": "Перекусить быстро",
+      "nextSceneId": "afterLunch",
+      "effect": {
+        "freeMinutesDelta": -10,
+        "energyDelta": 5,
+        "note": "Быстро перекусил, но чувство голода останется."
+      }
+    },
+    "long": {
+      "id": "long",
+      "description": "Плотно пообедать",
+      "nextSceneId": "afterLunch",
+      "effect": {
+        "freeMinutesDelta": -40,
+        "energyDelta": 20,
+        "note": "Сыт, но времени ушло много."
+      }
+    },
+    "skip": {
+      "id": "skip",
+      "description": "Не обедать",
+      "nextSceneId": "afterLunch",
+      "effect": {
+        "freeMinutesDelta": 0,
+        "energyDelta": -10,
+        "note": "Проголодался, работать тяжелее."
+      }
+    }
+  }
+}

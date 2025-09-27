@@ -1,0 +1,37 @@
+{
+  "id": "office",
+  "title": "Офис",
+  "text": "Ты приходишь в офис. Нужно решить, с чего начать.",
+  "choices": {
+    "coffee": {
+      "id": "coffee",
+      "description": "Сначала кофе",
+      "nextSceneId": "workStart",
+      "effect": {
+        "freeMinutesDelta": -10,
+        "energyDelta": 15,
+        "note": "Кофе помогает сосредоточиться."
+      }
+    },
+    "chat": {
+      "id": "chat",
+      "description": "Поболтать с коллегами",
+      "nextSceneId": "workStart",
+      "effect": {
+        "freeMinutesDelta": -20,
+        "energyDelta": 5,
+        "note": "Повеселился, но время уходит."
+      }
+    },
+    "tasks": {
+      "id": "tasks",
+      "description": "Сразу к задачам",
+      "nextSceneId": "workStart",
+      "effect": {
+        "freeMinutesDelta": 0,
+        "energyDelta": -10,
+        "note": "Начал работать без разгона, энергия падает."
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "preLunch",
+  "title": "Перерыв",
+  "text": "Перед обедом можно выбрать занятие.",
+  "choices": {
+    "scroll": {
+      "id": "scroll",
+      "description": "Полистать соцсети",
+      "nextSceneId": "urgentTask",
+      "effect": {
+        "freeMinutesDelta": -20,
+        "energyDelta": -5,
+        "note": "Мозг устал от ленты."
+      }
+    },
+    "walkOffice": {
+      "id": "walkOffice",
+      "description": "Пройтись по офису",
+      "nextSceneId": "urgentTask",
+      "effect": {
+        "freeMinutesDelta": -10,
+        "energyDelta": 5,
+        "note": "Немного размялся."
+      }
+    },
+    "work": {
+      "id": "work",
+      "description": "Продолжить работать",
+      "nextSceneId": "urgentTask",
+      "effect": {
+        "freeMinutesDelta": -30,
+        "energyDelta": -15,
+        "note": "Работаешь без отдыха, тяжеловато."
+      }
+    }
+  }
+}

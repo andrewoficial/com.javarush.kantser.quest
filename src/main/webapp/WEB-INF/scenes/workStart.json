@@ -1,0 +1,37 @@
+{
+  "id": "workStart",
+  "title": "Начало работы",
+  "text": "На столе список задач. С чего начнёшь?",
+  "choices": {
+    "easy": {
+      "id": "easy",
+      "description": "Сделать мелочь для разгона",
+      "nextSceneId": "preLunch",
+      "effect": {
+        "freeMinutesDelta": -15,
+        "energyDelta": 5,
+        "note": "Немного продвинулся, стало легче."
+      }
+    },
+    "hard": {
+      "id": "hard",
+      "description": "Взяться за сложную задачу",
+      "nextSceneId": "preLunch",
+      "effect": {
+        "freeMinutesDelta": -40,
+        "energyDelta": -20,
+        "note": "Сложно, но хоть часть сделал."
+      }
+    },
+    "chatAgain": {
+      "id": "chatAgain",
+      "description": "Ещё немного пообщаться с коллегами",
+      "nextSceneId": "preLunch",
+      "effect": {
+        "freeMinutesDelta": -30,
+        "energyDelta": 10,
+        "note": "Силы сохранил, но задачи ждут."
+      }
+    }
+  }
+}

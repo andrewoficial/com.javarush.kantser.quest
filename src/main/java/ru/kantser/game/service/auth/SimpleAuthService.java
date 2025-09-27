@@ -33,7 +33,7 @@ public class SimpleAuthService implements AuthService {
     
     @Override
     public void createUser(String username, String password) throws UserAlreadyExistsException {
-        log.info("run createUser [{}]", username);
+        log.info("run createUser with username: [{}] via SimpleAuthService in method createUser", username);
         if (users.containsKey(username)) {
             throw new UserAlreadyExistsException("Registration via SimpleAuthService", username, password);
         }
