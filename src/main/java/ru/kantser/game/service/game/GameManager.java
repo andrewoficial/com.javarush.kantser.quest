@@ -1,28 +1,26 @@
 package ru.kantser.game.service.game;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.kantser.game.model.scene.GameScene;
+import ru.kantser.game.model.scene.Scene;
 import ru.kantser.game.model.scene.choice.Choice;
-import ru.kantser.game.model.scene.choice.Effect;
-import ru.kantser.game.model.state.game.GameState;
-import ru.kantser.game.model.state.player.PlayerState;
-import ru.kantser.game.model.state.scene.SceneState;
-import ru.kantser.game.builder.scene.SceneJsonBuilder;
+import ru.kantser.game.model.state.GameState;
+import ru.kantser.game.model.state.PlayerState;
+import ru.kantser.game.model.state.SceneState;
+import ru.kantser.game.service.files.SceneJsonBuilder;
 import java.io.IOException;
 
 
+@Getter
 public class GameManager {
     private static final Logger log = LoggerFactory.getLogger(GameManager.class);
     private SceneJsonBuilder sceneBuilder;
-
-    public GameManager() {
-        log.info("GameManager инициализирован (без параметров)");
-    }
+    private final EffectApplier effectApplier;
 
     public GameManager(String scenesPath) {
-        this();
         SceneJsonBuilder sceneBuilder = new SceneJsonBuilder(scenesPath);
+        this.effectApplier = new DefaultEffectApplier();
         log.info("Создан SceneService с папкой {}", scenesPath);
         log.info("Созданный SceneService {}", sceneBuilder.toString());
         this.setSceneBuilder(sceneBuilder);
@@ -49,7 +47,7 @@ public class GameManager {
         }
 
         // Получаем сцену (если в state не вложена, загружаем через sceneService)
-        GameScene scene = sceneBuilder.getScene(sceneState.getCurrentSceneId());
+        Scene scene = sceneBuilder.getScene(sceneState.getCurrentSceneId());
         if (scene == null) throw new IllegalStateException("Scene not found: " + sceneState.getCurrentSceneId());
         log.info("Получил сцену, над которой надо применить действие {}", scene.getTitle());
         Choice choice = scene.getChoices().get(choiceId);
@@ -68,32 +66,22 @@ public class GameManager {
             // сюда можно добавить другие проверки
         }
 
-        Effect e = choice.getEffect();
-        if (e != null) {
-            if (e.getFreeMinutesDelta() != null) {
-                int newMinutes = player.getFreeMinutes() + e.getFreeMinutesDelta();
-                player.setFreeMinutes(Math.max(-100, newMinutes));
-            }
-
-            if (e.getEnergyDelta() != null) {
-                log.info("e.getEnergyDelta() {}",e.getEnergyDelta());
-                int newEnergy = player.getEnergy() + e.getEnergyDelta();
-                player.setEnergy(Math.max(-5, Math.min(100, newEnergy))); // clamp 0..100
-                state.setPlayerState(player);
-            }
+        if (choice.getEffect() != null) {
+            effectApplier.apply(choice.getEffect(), state.getPlayerState());
         }
 
-        // Смена сцены (проверка на завершение, но не очень красиво)
-        String nextScene;
+        String nextSceneId;
         if(player.getEnergy() < 10 || player.getFreeMinutes() < -50){
-            nextScene = "badEnding";
+            nextSceneId = "badEnding";
         }else{
-            nextScene = choice.getNextSceneId();
+            nextSceneId = choice.getNextSceneId();
         }
 
-        if (nextScene != null && !nextScene.isBlank()) {
+
+
+        if (nextSceneId != null && !nextSceneId.isBlank()) {
             SceneState newSceneState = new SceneState();
-            newSceneState.setCurrentSceneId(nextScene);
+            newSceneState.setCurrentSceneId(nextSceneId);
             if(choice.getEffect()  != null){
                 newSceneState.setTipText(choice.getEffect().getNote());
             }else{
@@ -101,14 +89,9 @@ public class GameManager {
             }
 
             state.setSceneState(newSceneState);
-        } else {
-            // если nextScene == null, оставляем ту же сцену
         }
 
         return state;
     }
 
-    public SceneJsonBuilder getSceneBuilder(){
-        return sceneBuilder;
-    }
 }

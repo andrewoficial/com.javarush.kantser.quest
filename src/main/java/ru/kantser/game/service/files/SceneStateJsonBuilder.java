@@ -1,12 +1,12 @@
-package ru.kantser.game.builder.state.scene;
+package ru.kantser.game.service.files;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.kantser.game.model.state.scene.SceneState;
+import ru.kantser.game.model.state.SceneState;
 
-public class SceneStateJsonBuilder implements SceneStateBuilder {
+public class SceneStateJsonBuilder {
     private static final Logger log = LoggerFactory.getLogger(SceneStateJsonBuilder.class);
     private String json;
 
@@ -15,7 +15,7 @@ public class SceneStateJsonBuilder implements SceneStateBuilder {
       this.json = json;
   }
 
-  @Override
+
   public SceneState build() {
       ObjectMapper mapper = new ObjectMapper();
       try {

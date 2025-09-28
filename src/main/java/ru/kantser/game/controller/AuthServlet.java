@@ -1,4 +1,4 @@
-package ru.kantser.game.servlet;
+package ru.kantser.game.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

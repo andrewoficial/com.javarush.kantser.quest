@@ -60,6 +60,57 @@
             list-style-type: none;
             padding-left: 0;
         }
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .modal-buttons {
+            margin-top: 15px;
+        }
+
+        .btn-modal {
+            padding: 8px 16px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -67,9 +118,20 @@
     <div class="menu">
         <a href="game?action=listSaves">Список сохранений</a> |
         <a href="game?action=new">Новая игра</a> |
+        <a href="#" onclick="showSaveDialog()">Сохранить</a> |
         <a href="logout">Выход</a>
     </div>
-
+    <div id="saveModal" class="modal">
+        <div class="modal-content">
+            <h3>Сохранение игры</h3>
+            <input type="text" id="saveSlotName" class="modal-input"
+                   placeholder="Введите название сохранения" maxlength="50">
+            <div class="modal-buttons">
+                <button onclick="confirmSave()" class="btn-modal btn-confirm">Сохранить</button>
+                <button onclick="closeSaveModal()" class="btn-modal btn-cancel">Отмена</button>
+            </div>
+        </div>
+    </div>
     <h1>${gameState.sceneState.currentScene.title}</h1>
 
     <!-- Блок с игровой статистикой -->
@@ -103,4 +165,68 @@
         </div>
     </c:if>
 </body>
+<script>
+function showSaveDialog() {
+    document.getElementById('saveSlotName').value = '';
+    document.getElementById('saveModal').style.display = 'block';
+}
+
+function closeSaveModal() {
+    document.getElementById('saveModal').style.display = 'none';
+}
+
+function confirmSave() {
+    const slotName = document.getElementById('saveSlotName').value.trim();
+    if (slotName === '') {
+        alert('Пожалуйста, введите название сохранения');
+        return;
+    }
+    closeSaveModal();
+    saveGame(slotName);
+}
+
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    const modal = document.getElementById('saveModal');
+    if (event.target === modal) {
+        closeSaveModal();
+    }
+}
+
+// Закрытие по ESC
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeSaveModal();
+    }
+});
+
+function saveGame(slotName) {
+    // Отправка формы (как в предыдущем примере)
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'saves';
+
+    const usernameInput = document.createElement('input');
+    usernameInput.type = 'hidden';
+    usernameInput.name = 'username';
+    usernameInput.value = '${sessionScope.userId}';
+
+    const slotNameInput = document.createElement('input');
+    slotNameInput.type = 'hidden';
+    slotNameInput.name = 'slotName';
+    slotNameInput.value = slotName;
+
+    const actionInput = document.createElement('input');
+    actionInput.type = 'hidden';
+    actionInput.name = 'action';
+    actionInput.value = 'save';
+
+    form.appendChild(usernameInput);
+    form.appendChild(slotNameInput);
+    form.appendChild(actionInput);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
 </html>

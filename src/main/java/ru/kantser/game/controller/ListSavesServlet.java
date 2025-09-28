@@ -1,4 +1,4 @@
-package ru.kantser.game.servlet;
+package ru.kantser.game.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,19 +8,30 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.kantser.game.constatnt.AppConstant;
+import ru.kantser.game.model.state.GameState;
+import ru.kantser.game.service.game.GameManager;
 import ru.kantser.game.service.game.SaveGameManager;
+import ru.kantser.game.service.validator.ChoiceIdValidator;
+import ru.kantser.game.service.validator.ObjValidator;
+
 import java.io.IOException;
 
 @WebServlet("/saves")
 public class ListSavesServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(ListSavesServlet.class);
     private SaveGameManager saveManager;
+    private GameManager gameManager;
+    private ObjValidator objValidator;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         log.info("init");
-        String savePath = getServletContext().getRealPath("/saves");
+        String savePath = getServletContext().getRealPath(AppConstant.AppLinks.PATH_TO_USER_SAVES);
+        String scenesPath = getServletContext().getRealPath(AppConstant.AppLinks.PATH_TO_JSON_SCENES);
         this.saveManager = new SaveGameManager(savePath);
+        this.gameManager = new GameManager(scenesPath);
+        this.objValidator = new ObjValidator(this.gameManager);
     }
 
     @Override
@@ -40,6 +51,8 @@ public class ListSavesServlet extends HttpServlet {
                 processPostActionRemove(req, resp, username, slotName);
             } else if ("load".equals(action)) {
                 processPostActionLoad(req, resp, username, slotName);
+            } else if ("save".equals(action)) {
+                processPostActionSave(req, resp, username, slotName);
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
             }
@@ -47,10 +60,11 @@ public class ListSavesServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         log.info("doGet" );
-        String userId = (String) req.getSession().getAttribute("userId");
+        String userId = (String) req.getSession().getAttribute(AppConstant.RequestAttrNames.USER_ID);
         if (userId == null) {
             resp.sendRedirect("login.html");
             return;
@@ -69,26 +83,57 @@ public class ListSavesServlet extends HttpServlet {
         if ("listSaves".equals(action)) {
             // Получаем список сохранений
             var saves = saveManager.listSaves(userId);
-            req.setAttribute("saves", saves);
-            req.getRequestDispatcher("/WEB-INF/JSP/list-saves.jsp").forward(req, resp);
+            req.setAttribute(AppConstant.RequestAttrNames.SAVES, saves);
+            req.getRequestDispatcher(AppConstant.AppLinks.FILE_JSP_LIST_SAVES).forward(req, resp);
         } else {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Неизвестное действие: " + action);
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown action: " + action);
         }
 
 
     }
 
-    private void processPostActionLoad(HttpServletRequest req, HttpServletResponse resp, String username, String slotName) throws IOException, ServletException {
-        log.info("processPostActionLoad user={} slot={}", username, slotName);
-
-        if (slotName == null || username == null) {
-            log.warn("username или slotName null");
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "username или slotName null");
+    private void processPostActionSave(HttpServletRequest req, HttpServletResponse resp, String username, String slotName) throws IOException {
+        log.info("processPostActionSave user={} slot={}", username, slotName);
+        Object sessionState = req.getSession().getAttribute(AppConstant.SessionKeys.SESSION_KEY_GAME_STATE);
+        if(slotName == null){
+            log.warn("slotName is null");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "slotName is NULL");
+            return;
+        }
+        if(username == null){
+            log.warn("username is null");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "username is NULL");
+            return;
+        }
+        if(sessionState == null){
+            log.warn("sessionState is null");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "sessionState is NULL");
             return;
         }
 
-        // Загружаем сохранение (используем saveManager)
-        ru.kantser.game.model.state.game.GameState loaded;
+
+        if (! (sessionState instanceof GameState)){
+            log.warn("sessionState is not instanceof GameState");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "sessionState is not instanceof GameState");
+            return;
+        }
+        log.info("Found game state (obj)");
+        GameState gameState = (GameState) sessionState;
+        objValidator.ensureSceneLoaded(gameState);
+
+        saveManager.save(gameState, username, slotName);
+        resp.sendRedirect(req.getContextPath() + "/game?action=show");
+    }
+
+    private void processPostActionLoad(HttpServletRequest req, HttpServletResponse resp, String username, String slotName) throws IOException, ServletException {
+        log.info("processPostActionLoad user={} slot={}", username, slotName);
+        if (slotName == null || username == null) {
+            log.warn("username или slotName null");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "username or slotName null");
+            return;
+        }
+
+        GameState loaded;
         try {
             loaded = saveManager.load(username, slotName);
         } catch (IOException e) {
@@ -99,24 +144,24 @@ public class ListSavesServlet extends HttpServlet {
 
         if (loaded == null) {
             log.warn("Save not found: {}/{}", username, slotName);
-            // редиректим обратно к списку с сообщением (можно добавить param ?msg=notfound)
             resp.sendRedirect(req.getContextPath() + "/saves?action=listSaves");
             return;
         }
 
-        // Кладём состояние в сессию и редиректим на /game?action=show (GET)
         HttpSession session = req.getSession();
-        session.setAttribute("gameState", loaded);
-        session.setAttribute("userId", username); // на всякий случай, если нет
+        session.setAttribute(AppConstant.RequestAttrNames.GAME_STATE, loaded);
+        session.setAttribute(AppConstant.RequestAttrNames.USER_ID, username);
 
-        // Post-Redirect-Get: после POST делаем redirect на страницу игры (GET)
         resp.sendRedirect(req.getContextPath() + "/game?action=show");
     }
+
+
 
     private void processPostActionRemove(HttpServletRequest req, HttpServletResponse resp,
                                          String username, String slotName) throws IOException {
         log.info("handleRemoveSave");
-        resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "Удаление не реализовано.");
+        saveManager.delete(username, slotName);
+        resp.sendRedirect(req.getContextPath() + "/game?action=listSaves");
 
     }
 }

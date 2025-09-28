@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.kantser.game.model.state.game.GameState;
+import ru.kantser.game.constatnt.AppConstant;
+import ru.kantser.game.model.state.GameState;
 import ru.kantser.game.model.state.StateRepository;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class SaveGameManager implements StateRepository {
 
     private Path getUserSavePath(String userId, String saveId) {
         log.info("getUserSavePath");
-        return Paths.get(baseSavePath, userId, saveId + ".json");
+        return Paths.get(baseSavePath, userId, saveId + AppConstant.FileExtensions.FILE_EXTENSION_DOT_JSON);
     }
 
     private Path getUserDirectory(String userId) {
@@ -92,13 +93,22 @@ public class SaveGameManager implements StateRepository {
         try {
             log.info("return not empty list");
             return Files.list(userDir)
-                    .filter(path -> path.toString().endsWith(".json"))
-                    .map(path -> path.getFileName().toString().replace(".json", ""))
+                    .filter(path -> path.toString().endsWith(AppConstant.FileExtensions.FILE_EXTENSION_DOT_JSON))
+                    .map(path -> path.getFileName().toString().replace(AppConstant.FileExtensions.FILE_EXTENSION_DOT_JSON, ""))
                     .sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
             log.info("return empty list");
             return List.of();
         }
+    }
+
+    public synchronized void delete(String userId, String saveId) throws IOException {
+        log.info("delete");
+        Path savePath = getUserSavePath(userId, saveId);
+        if (!Files.exists(savePath)) {
+            throw new FileNotFoundException("Save game not found: " + savePath);
+        }
+        Files.delete(savePath);
     }
 }

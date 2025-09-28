@@ -1,7 +1,5 @@
 package ru.kantser.game.model.state;
 
-import ru.kantser.game.model.state.game.GameState;
-
 import java.io.IOException;
 
 public interface StateRepository {

@@ -2,8 +2,6 @@ package ru.kantser.game.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.kantser.game.service.game.GameManager;
-
 import javax.security.auth.login.CredentialException;
 
 public class UserAlreadyExistsException extends CredentialException {
@@ -20,6 +18,5 @@ public class UserAlreadyExistsException extends CredentialException {
         }
 
         log.warn("User with credentials name [{}] and password length [{}] already exist! Message: [{}]", login, pwd.length(), message);
-
     }
 }
