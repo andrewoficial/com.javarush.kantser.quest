@@ -1,0 +1,193 @@
+/* webapp/css/game.css */
+
+body {
+    background-color: #e8f5e9;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+}
+
+.menu {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.menu a {
+    color: #2e7d32;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+.menu a:hover {
+    text-decoration: underline;
+}
+
+.scene-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 1px solid #c8e6c9;
+}
+
+.scene-container h2 {
+    color: #1b5e20;
+    margin-top: 0;
+}
+
+.scene-container p {
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.choice-button {
+    background-color: rgba(76, 175, 80, 0.7);
+    border: none;
+    border-radius: 5px;
+    padding: 12px 20px;
+    margin: 5px 0;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    color: #fff;
+}
+
+.choice-button:hover {
+    background-color: rgba(76, 175, 80, 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.choice-form {
+    display: block;
+    margin: 10px 0;
+}
+
+.stats {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 10px 0;
+    border: 1px solid #a5d6a7;
+    font-size: 14px;
+}
+
+.stats p {
+    margin: 5px 0;
+    color: #2e7d32;
+}
+
+.choices-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.choices-list li {
+    margin-bottom: 8px;
+}
+
+/* Стили для модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 25px;
+    border-radius: 8px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 {
+    color: #2e7d32;
+    margin-top: 0;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+.modal-buttons {
+    margin-top: 20px;
+}
+
+.btn-modal {
+    padding: 10px 20px;
+    margin: 0 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-confirm {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background-color: #45a049;
+}
+
+.btn-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #da190b;
+}
+
+/* Дополнительные стили для улучшения внешнего вида */
+h1 {
+    color: #1b5e20;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 10px;
+}
+
+.scene-container h3 {
+    color: #2e7d32;
+    border-bottom: 1px solid #c8e6c9;
+    padding-bottom: 8px;
+}
+
+.tip-text {
+    font-style: italic;
+    color: #666;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+    border-left: 4px solid #4CAF50;
+}

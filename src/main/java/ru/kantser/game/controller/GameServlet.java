@@ -17,7 +17,7 @@ import ru.kantser.game.model.state.SceneState;
 import ru.kantser.game.service.game.GameManager;
 import ru.kantser.game.service.game.SaveGameManager;
 import ru.kantser.game.service.validator.ChoiceIdValidator;
-import ru.kantser.game.service.validator.ObjValidator;
+import ru.kantser.game.service.validator.GameStateValidator;
 
 import java.io.IOException;
 import java.util.*;
@@ -29,7 +29,7 @@ public class GameServlet extends HttpServlet {
     private GameManager gameManager;
     private SaveGameManager saveManager;
     private ChoiceIdValidator choiceIdValidator;
-    private ObjValidator objValidator;
+    private GameStateValidator objValidator;
 
     @Override
     public void init() {
@@ -39,7 +39,7 @@ public class GameServlet extends HttpServlet {
         this.saveManager = new SaveGameManager(savePath);
         this.gameManager = new GameManager(scenesPath);
         this.choiceIdValidator = new ChoiceIdValidator();
-        this.objValidator = new ObjValidator(this.gameManager);
+        this.objValidator = new GameStateValidator(this.gameManager.getSceneBuilder());
     }
 
     @Override

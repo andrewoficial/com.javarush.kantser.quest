@@ -9,89 +9,87 @@ import ru.kantser.game.model.state.GameState;
 import ru.kantser.game.model.state.PlayerState;
 import ru.kantser.game.model.state.SceneState;
 import ru.kantser.game.service.files.SceneJsonBuilder;
+import ru.kantser.game.service.validator.GameStateValidator;
+import ru.kantser.game.service.validator.requirement.CompositeRequirementValidator;
 import java.io.IOException;
-
 
 @Getter
 public class GameManager {
     private static final Logger log = LoggerFactory.getLogger(GameManager.class);
     private SceneJsonBuilder sceneBuilder;
     private final EffectApplier effectApplier;
+    private final GameStateValidator gameStateValidator;
+    private final CompositeRequirementValidator requirementsValidator;
+    private final NextSceneResolver nextSceneResolver;
 
     public GameManager(String scenesPath) {
         SceneJsonBuilder sceneBuilder = new SceneJsonBuilder(scenesPath);
         this.effectApplier = new DefaultEffectApplier();
-        log.info("Создан SceneService с папкой {}", scenesPath);
-        log.info("Созданный SceneService {}", sceneBuilder.toString());
+        this.requirementsValidator = new CompositeRequirementValidator();
+        this.nextSceneResolver = new NextSceneResolver();
+        log.info("Created SceneService with folder: {}", scenesPath);
+        log.info("Created SceneService: {}", sceneBuilder.toString());
         this.setSceneBuilder(sceneBuilder);
-        log.info("GameManager инициализирован (scenesPath)");
+        log.info("GameManager initialized (scenesPath)");
+        this.gameStateValidator = new GameStateValidator(this.sceneBuilder);
     }
 
-    public void setSceneBuilder(SceneJsonBuilder sceneBuilder){
-        if(sceneBuilder == null){
-            log.warn("Передал null SceneService в метод setSceneService");
+    public void setSceneBuilder(SceneJsonBuilder sceneBuilder) {
+        if (sceneBuilder == null) {
+            log.warn("Passed null SceneService to setSceneService method");
         }
         this.sceneBuilder = sceneBuilder;
     }
 
     public GameState processChoice(GameState state, String choiceId) throws IOException {
-        log.info("Применяю результат выбора к игроку и сцене choiceId{}", choiceId);
-        if (state == null) throw new IllegalArgumentException("state == null");
-        if (choiceId == null) throw new IllegalArgumentException("choiceId == null");
+        log.info("Applying choice result to player and scene. Choice ID: {}", choiceId);
+
+        gameStateValidator.validateGameState(state);
 
         SceneState sceneState = state.getSceneState();
         PlayerState player = state.getPlayerState();
 
-        if (sceneState == null || sceneState.getCurrentSceneId() == null) {
-            throw new IllegalStateException("No current scene");
-        }
+        Scene scene = gameStateValidator.validateAndLoadScene(sceneState.getCurrentSceneId());
+        Choice choice = getValidatedChoice(scene, choiceId);
 
-        // Получаем сцену (если в state не вложена, загружаем через sceneService)
-        Scene scene = sceneBuilder.getScene(sceneState.getCurrentSceneId());
-        if (scene == null) throw new IllegalStateException("Scene not found: " + sceneState.getCurrentSceneId());
-        log.info("Получил сцену, над которой надо применить действие {}", scene.getTitle());
-        Choice choice = scene.getChoices().get(choiceId);
-        if (choice == null) throw new IllegalArgumentException("Unknown choice: " + choiceId);
-        log.info("Получил выбранное действие, импакт которого надо применить {}", choice.getId());
-        // Проверка требований (requires) — простой пример:
-        if (choice.getRequires() != null) {
-            Object minEnergyObj = choice.getRequires().get("minEnergy");
-            if (minEnergyObj instanceof Number) {
-                int minEnergy = ((Number) minEnergyObj).intValue();
-                if (player.getEnergy() < minEnergy) {
-                    // нельзя выбрать — оставляем state без изменений или кидаем исключение
-                    throw new IllegalStateException("Недостаточно энергии для выбора " + choiceId);
-                }
-            }
-            // сюда можно добавить другие проверки
-        }
-
-        if (choice.getEffect() != null) {
-            effectApplier.apply(choice.getEffect(), state.getPlayerState());
-        }
-
-        String nextSceneId;
-        if(player.getEnergy() < 10 || player.getFreeMinutes() < -50){
-            nextSceneId = "badEnding";
-        }else{
-            nextSceneId = choice.getNextSceneId();
-        }
-
-
-
-        if (nextSceneId != null && !nextSceneId.isBlank()) {
-            SceneState newSceneState = new SceneState();
-            newSceneState.setCurrentSceneId(nextSceneId);
-            if(choice.getEffect()  != null){
-                newSceneState.setTipText(choice.getEffect().getNote());
-            }else{
-                newSceneState.setTipText("");
-            }
-
-            state.setSceneState(newSceneState);
-        }
+        requirementsValidator.validate(choice, player);
+        applyChoiceEffects(choice, player);
+        updateGameState(state, choice, player);
 
         return state;
     }
 
+    private Choice getValidatedChoice(Scene scene, String choiceId) {
+        Choice choice = scene.getChoices().get(choiceId);
+        if (choice == null) {
+            throw new IllegalArgumentException("Unknown choice: " + choiceId);
+        }
+        log.info("Retrieved selected action to apply impact: {}", choice.getId());
+        return choice;
+    }
+
+    private void applyChoiceEffects(Choice choice, PlayerState player) {
+        if (choice.getEffect() != null) {
+            effectApplier.apply(choice.getEffect(), player);
+        }
+    }
+
+    private void updateGameState(GameState state, Choice choice, PlayerState player) {
+        String nextSceneId = nextSceneResolver.resolveNextScene(choice, player);
+
+        if (nextSceneId != null && !nextSceneId.isBlank()) {
+            SceneState newSceneState = createNewSceneState(choice, nextSceneId);
+            state.setSceneState(newSceneState);
+        }
+    }
+
+    private SceneState createNewSceneState(Choice choice, String nextSceneId) {
+        SceneState newSceneState = new SceneState();
+        newSceneState.setCurrentSceneId(nextSceneId);
+
+        String tipText = choice.getEffect() != null ? choice.getEffect().getNote() : "";
+        newSceneState.setTipText(tipText);
+
+        return newSceneState;
+    }
 }

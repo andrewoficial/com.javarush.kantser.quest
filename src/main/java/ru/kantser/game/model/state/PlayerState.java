@@ -10,31 +10,28 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Set;
 
+@Getter
 public class PlayerState {
     private static final Logger log = LoggerFactory.getLogger(PlayerState.class);
     private  String playerId;
-    @Getter
+
     private  Map<String, Integer> resources;
-    @Getter
+
     private  Map<String, Integer> skills;
-    @Getter
+
     private  Set<String> inventory;
-    @Getter
+
     private  String currentScene;
-    @Getter
+
     private  String timeSlot;
-    @Getter
+
     private  int day;
-    @Getter
+
     @Setter
     private  int energy;
-    @Getter
+
     @Setter
     private  int freeMinutes;
-
-    public PlayerState() {
-        log.info("Создаю PlayerState без параметров");
-    }
 
     @JsonCreator
     public PlayerState(

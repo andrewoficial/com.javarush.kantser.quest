@@ -3,115 +3,8 @@
 <html>
 <head>
     <title>Game</title>
-    <style>
-        body {
-            background-color: #e8f5e9; /* Светло-зеленый фон */
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-
-        .menu {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .scene-container {
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-
-        .choice-button {
-            background-color: rgba(76, 175, 80, 0.7); /* Полупрозрачный зеленый */
-            border: none;
-            border-radius: 5px;
-            padding: 12px 20px;
-            margin: 5px 0;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 16px;
-        }
-
-        .choice-button:hover {
-            background-color: rgba(76, 175, 80, 0.9);
-        }
-
-        .choice-form {
-            display: block;
-            margin: 10px 0;
-        }
-
-        .stats {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 5px;
-            display: inline-block;
-            margin: 10px 0;
-        }
-
-        .choices-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        /* Стили для модального окна */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-            text-align: center;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .modal-buttons {
-            margin-top: 15px;
-        }
-
-        .btn-modal {
-            padding: 8px 16px;
-            margin: 0 5px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-confirm {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .btn-cancel {
-            background-color: #f44336;
-            color: white;
-        }
-    </style>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/game.css">
 </head>
 <body>
     <!-- Меню вверху страницы -->
@@ -121,6 +14,7 @@
         <a href="#" onclick="showSaveDialog()">Сохранить</a> |
         <a href="logout">Выход</a>
     </div>
+
     <div id="saveModal" class="modal">
         <div class="modal-content">
             <h3>Сохранение игры</h3>
@@ -132,16 +26,27 @@
             </div>
         </div>
     </div>
+
     <h1>${gameState.sceneState.currentScene.title}</h1>
 
     <!-- Блок с игровой статистикой -->
     <c:if test="${not empty gameState.playerState}">
         <div class="stats">
-            <p>День: ${gameState.playerState.day} | Время: ${gameState.playerState.timeSlot} | Силы: ${gameState.playerState.energy} | Свободное время: ${gameState.playerState.freeMinutes}</p>
-            <p>Инвентарь: ${gameState.playerState.resources}</p>
+            <p>День: ${gameState.playerState.day} | Время: ${gameState.playerState.timeSlot} |
+               Силы: ${gameState.playerState.energy} | Свободное время: ${gameState.playerState.freeMinutes}</p>
+            <p>Инвентарь:
+                <c:forEach var="resource" items="${gameState.playerState.resources}" varStatus="status">
+                    ${resource.key}: ${resource.value}<c:if test="${!status.last}">, </c:if>
+                </c:forEach>
+            </p>
         </div>
     </c:if>
-    <i>${gameState.sceneState.getTipText()}</i>
+
+    <!-- Подсказка -->
+    <c:if test="${not empty gameState.sceneState.tipText}">
+        <div class="tip-text">${gameState.sceneState.tipText}</div>
+    </c:if>
+
     <!-- Блок с текущей сценой -->
     <c:if test="${not empty gameState.sceneState.currentScene}">
         <div class="scene-container">
@@ -169,6 +74,7 @@
 function showSaveDialog() {
     document.getElementById('saveSlotName').value = '';
     document.getElementById('saveModal').style.display = 'block';
+    document.getElementById('saveSlotName').focus();
 }
 
 function closeSaveModal() {
@@ -201,7 +107,6 @@ document.addEventListener('keydown', function(event) {
 });
 
 function saveGame(slotName) {
-    // Отправка формы (как в предыдущем примере)
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'saves';

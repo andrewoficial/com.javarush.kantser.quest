@@ -12,8 +12,8 @@ import ru.kantser.game.constatnt.AppConstant;
 import ru.kantser.game.model.state.GameState;
 import ru.kantser.game.service.game.GameManager;
 import ru.kantser.game.service.game.SaveGameManager;
-import ru.kantser.game.service.validator.ChoiceIdValidator;
-import ru.kantser.game.service.validator.ObjValidator;
+import ru.kantser.game.service.validator.GameStateValidator;
+
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ public class ListSavesServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(ListSavesServlet.class);
     private SaveGameManager saveManager;
     private GameManager gameManager;
-    private ObjValidator objValidator;
+    private GameStateValidator gameStateValidator;
 
     @Override
     public void init() {
@@ -31,7 +31,7 @@ public class ListSavesServlet extends HttpServlet {
         String scenesPath = getServletContext().getRealPath(AppConstant.AppLinks.PATH_TO_JSON_SCENES);
         this.saveManager = new SaveGameManager(savePath);
         this.gameManager = new GameManager(scenesPath);
-        this.objValidator = new ObjValidator(this.gameManager);
+        this.gameStateValidator = new GameStateValidator(this.gameManager.getSceneBuilder());
     }
 
     @Override
@@ -119,7 +119,7 @@ public class ListSavesServlet extends HttpServlet {
         }
         log.info("Found game state (obj)");
         GameState gameState = (GameState) sessionState;
-        objValidator.ensureSceneLoaded(gameState);
+        gameStateValidator.ensureSceneLoaded(gameState);
 
         saveManager.save(gameState, username, slotName);
         resp.sendRedirect(req.getContextPath() + "/game?action=show");
