@@ -5,9 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.kantser.game.model.scene.choice.Effect;
-import ru.kantser.game.model.state.PlayerState;
-import ru.kantser.game.service.game.DefaultEffectApplier;
+import com.javarush.kantser.quest.model.scene.choice.Effect;
+import com.javarush.kantser.quest.model.state.PlayerState;
+import com.javarush.kantser.quest.service.game.DefaultEffectApplier;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
